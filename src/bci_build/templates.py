@@ -55,7 +55,8 @@ KIWI_TEMPLATE = jinja2.Template(
     """<?xml version="1.0" encoding="utf-8"?>
 <!-- SPDX-License-Identifier: {{ image.license }} -->
 
-<!-- OBS-AddTag: {% for tag in image.build_tags -%} {{ tag }} {% endfor -%}-->
+{% if image.exclusive_arch %}<!-- OBS-ExclusiveArch: {% for arch in image.exclusive_arch %}{{ arch }} {% endfor %}-->
+{% endif %}<!-- OBS-AddTag: {% for tag in image.build_tags -%} {{ tag }} {% endfor -%}-->
 <!-- OBS-Imagerepo: obsrepositories:/ -->
 
 <image schemaversion="6.5" name="{{ image.uid }}-image" xmlns:suse_label_helper="com.suse.label_helper">

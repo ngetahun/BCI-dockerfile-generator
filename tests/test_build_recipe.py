@@ -339,6 +339,7 @@ VOLUME /bin/ /usr/bin/""",
             """<?xml version="1.0" encoding="utf-8"?>
 <!-- SPDX-License-Identifier: BSD -->
 
+<!-- OBS-ExclusiveArch: x86_64 s390x -->
 <!-- OBS-AddTag: opensuse/bci/test:28.2 opensuse/bci/test:28.2-%RELEASE% opensuse/bci/test:28 opensuse/bci/test:28-%RELEASE% opensuse/bci/test:latest opensuse/bci/emacs:28.2 opensuse/bci/emacs:28.2-%RELEASE% opensuse/bci/emacs:28 opensuse/bci/emacs:28-%RELEASE% opensuse/bci/emacs:latest -->
 <!-- OBS-Imagerepo: obsrepositories:/ -->
 
