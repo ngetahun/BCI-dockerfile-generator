@@ -99,7 +99,7 @@ RUN emacs -Q --batch test.el
 </image>""",
             LanguageStackContainer(
                 name="test",
-                pretty_name="Test",
+                pretty_name="test language",
                 supported_until=date(2024, 2, 1),
                 package_list=["gcc", "emacs"],
                 package_name="test-image",
@@ -121,8 +121,8 @@ MAINTAINER SUSE LLC (https://www.suse.com/)
 
 # Define labels according to https://en.opensuse.org/Building_derived_containers
 # labelprefix=com.suse.bci.test
-LABEL org.opencontainers.image.title="SLE BCI Test"
-LABEL org.opencontainers.image.description="Test container based on the SLE Base Container Image."
+LABEL org.opencontainers.image.title="SLE BCI Test Language"
+LABEL org.opencontainers.image.description="Test language container based on the SLE Base Container Image."
 LABEL org.opencontainers.image.version="%%emacs_ver%%"
 LABEL org.opencontainers.image.url="https://www.suse.com/products/server/"
 LABEL org.opencontainers.image.created="%BUILDTIME%"

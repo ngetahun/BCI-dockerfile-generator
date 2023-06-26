@@ -863,7 +863,13 @@ exit 0
         :py:attr:`~ImageProperties.distribution_base_name`.
 
         """
-        return f"{self._image_properties.distribution_base_name} BCI {self.pretty_name}"
+
+        capitalized_title = ""
+        for w in self.pretty_name.split(' '):
+            capitalized_title += f"{w if w.isupper() else w.title()} "
+        capitalized_title = capitalized_title.rstrip()
+
+        return f"{self._image_properties.distribution_base_name} BCI {capitalized_title}"
 
     @property
     def extra_label_lines(self) -> str:
