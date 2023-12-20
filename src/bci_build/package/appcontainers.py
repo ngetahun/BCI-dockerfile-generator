@@ -639,6 +639,7 @@ TRIVY_CONTAINERS = [
     for os_version in (OsVersion.TUMBLEWEED,)
 ]
 
+
 _TOMCAT_VERSIONS = [9, 10]
 assert _TOMCAT_VERSIONS == sorted(_TOMCAT_VERSIONS)
 
@@ -783,4 +784,31 @@ https://tomcat.apache.org/migration-10.html
         },
     )
     for tomcat_major, os_version in product(_TOMCAT_VERSIONS, ALL_BASE_OS_VERSIONS)
+]
+
+REDIS_CONTAINERS = [
+    ApplicationStackContainer(
+        name="redis",
+        pretty_name="Redis",
+        package_name="redis-image",
+        from_image=f"{_build_tag_prefix(os_version)}/bci-micro:{OsContainer.version_to_container_os_version(os_version)}",
+        os_version=os_version,
+        is_latest=os_version in CAN_BE_LATEST_OS_VERSION,
+        version="%%redis_version%%",
+        version_in_uid=False,
+        replacements_via_service=[
+            Replacement(
+                regex_in_build_description="%%redis_version%%",
+                package_name="redis",
+                parse_version="minor",
+            )
+        ],
+        license="Apache-2.0",
+        package_list=[
+            Package(name, pkg_type=PackageType.BOOTSTRAP) for name in ("redis",)
+        ],
+        entrypoint=["/usr/sbin/redis-server"],
+        build_recipe_type=BuildType.KIWI,
+    )
+    for os_version in ALL_BASE_OS_VERSIONS
 ]
