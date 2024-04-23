@@ -26,15 +26,9 @@ _DISABLE_GETTY_AT_TTY1_SERVICE = "systemctl disable getty@tty1.service"
 def _get_os_container_package_names(os_version: OsVersion) -> tuple[str, ...]:
     if os_version == OsVersion.TUMBLEWEED:
         return ("openSUSE-release", "openSUSE-release-appliance-docker")
-    if os_version == OsVersion.SLCC:
-        return ("ALP-dummy-release",)
+    if os_version.is_slcc:
+        return (f"{str(os_version).lower()}-release",)
     return ("sles-release",)
-
-
-def _get_eula_package_names(os_version: OsVersion) -> tuple[str, ...]:
-    if os_version in (OsVersion.TUMBLEWEED, OsVersion.SLCC):
-        return ()
-    return ("skelcd-EULA-bci",)
 
 
 MICRO_CONTAINERS = [
@@ -58,7 +52,7 @@ MICRO_CONTAINERS = [
                 # ca-certificates-mozilla-prebuilt requires /bin/cp, which is otherwise not resolved…
                 "coreutils",
             )
-            + _get_eula_package_names(os_version)
+            + os_version.eula_package_names
             + _get_os_container_package_names(os_version)
         ],
         # intentionally empty
@@ -159,7 +153,12 @@ def _get_minimal_kwargs(os_version: OsVersion):
         Package(name, pkg_type=PackageType.BOOTSTRAP)
         for name in _get_os_container_package_names(os_version)
     ]
-    if os_version in (OsVersion.TUMBLEWEED, OsVersion.SLCC):
+    if os_version in (
+        OsVersion.TUMBLEWEED,
+        OsVersion.SLCC_FREE,
+        OsVersion.SLCC_PAID,
+        OsVersion.SLCC_SLES_16_CONTAINERS,
+    ):
         package_list.append(Package("rpm", pkg_type=PackageType.BOOTSTRAP))
     else:
         # in SLE15, rpm still depends on Perl.
@@ -168,8 +167,10 @@ def _get_minimal_kwargs(os_version: OsVersion):
             for name in ("rpm-ndb", "perl-base")
         ]
 
+    micro_name = "micro" if os_version.is_slcc else "bci-micro"
+
     kwargs = {
-        "from_image": f"{_build_tag_prefix(os_version)}/bci-micro:{OsContainer.version_to_container_os_version(os_version)}",
+        "from_image": f"{_build_tag_prefix(os_version)}/{micro_name}:{OsContainer.version_to_container_os_version(os_version)}",
         "pretty_name": f"{os_version.pretty_os_version_no_dash} Minimal",
         "package_list": package_list,
     }
@@ -222,7 +223,7 @@ BUSYBOX_CONTAINERS = [
                 "busybox-links",
                 "ca-certificates-mozilla-prebuilt",
             )
-            + _get_eula_package_names(os_version)
+            + os_version.eula_package_names
         ],
         config_sh_script=textwrap.dedent(
             """
@@ -240,8 +241,8 @@ BUSYBOX_CONTAINERS = [
 KERNEL_MODULE_CONTAINERS = []
 
 for os_version in ALL_OS_VERSIONS - {OsVersion.TUMBLEWEED}:
-    if os_version == OsVersion.SLCC:
-        prefix = "slci"
+    if os_version.is_slcc:
+        prefix = "slcc"
         pretty_prefix = prefix.upper()
     else:
         prefix = "sle15"

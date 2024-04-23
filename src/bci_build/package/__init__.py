@@ -1554,14 +1554,14 @@ from .python import PYTHON_TW_CONTAINERS  # noqa: E402
 from .rmt import RMT_CONTAINERS  # noqa: E402
 from .ruby import RUBY_CONTAINERS  # noqa: E402
 from .rust import RUST_CONTAINERS  # noqa: E402
-from .slcc_base import SLCC_BASE  # noqa: E402
+from .slcc_base import SLCC_BASE_CONTAINERS  # noqa: E402
 from .spack import SPACK_CONTAINERS  # noqa: E402
 
 ALL_CONTAINER_IMAGE_NAMES: dict[str, BaseContainerImage] = {
     f"{bci.uid}-{bci.os_version.pretty_print.lower()}": bci
     for bci in (
-        SLCC_BASE,
-        PYTHON_3_12_CONTAINERS,
+        *SLCC_BASE_CONTAINERS,
+        *PYTHON_3_12_CONTAINERS,
         *PYTHON_3_6_CONTAINERS,
         *PYTHON_3_11_CONTAINERS,
         *PYTHON_TW_CONTAINERS,

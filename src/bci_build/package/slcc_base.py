@@ -6,42 +6,47 @@ from bci_build.package import OsVersion
 from bci_build.package import Package
 from bci_build.package import PackageType
 
-SLCC_BASE = OsContainer(
-    name="base",
-    pretty_name="Base",
-    package_name="base-image",
-    build_recipe_type=BuildType.KIWI,
-    from_image=None,
-    os_version=OsVersion.SLCC,
-    is_latest=True,
-    package_list=[
-        Package(name=pkg_name, pkg_type=PackageType.BOOTSTRAP)
-        for pkg_name in (
-            "aaa_base",
-            "bash",
-            "ca-certificates",
-            "ca-certificates-mozilla",
-            "coreutils",
-            "cracklib-dict-small",
-            "curl",
-            "filesystem",
-            "glibc-locale-base",
-            "gzip",
-            "jdupes",
-            "netcfg",
-            # FIXME: enable this once it's on OBS
-            # "lsb-release",
-            "ALP-dummy-release",
-            "openssl",
-            "suse-build-key",
-            # "patterns-alp-base",
-            "tar",
-            "timezone",
-            "zypper",
-            "findutils",
-        )
-    ],
-    config_sh_script=r"""echo "Configure image: [$kiwi_iname]..."
+SLCC_BASE_CONTAINERS = [
+    OsContainer(
+        name="base",
+        pretty_name="Base",
+        package_name="base-image",
+        build_recipe_type=BuildType.KIWI,
+        from_image=None,
+        os_version=os_version,
+        is_latest=True,
+        package_list=[
+            Package(name=pkg_name, pkg_type=PackageType.BOOTSTRAP)
+            for pkg_name in (
+                "aaa_base",
+                "bash",
+                "ca-certificates",
+                "ca-certificates-mozilla",
+                "coreutils",
+                "cracklib-dict-small",
+                "curl",
+                "filesystem",
+                "glibc-locale-base",
+                "gzip",
+                "jdupes",
+                "netcfg",
+                # FIXME: enable this once it's on OBS
+                # "lsb-release",
+                "openssl",
+                "suse-build-key",
+                # "patterns-alp-base",
+                "tar",
+                "timezone",
+                "zypper",
+                "findutils",
+            )
+            + (
+                ("container-suseconnect",)
+                if os_version.has_container_suseconnect
+                else ()
+            )
+        ],
+        config_sh_script=r"""echo "Configure image: [$kiwi_iname]..."
 
 # don't have multiple licenses of the same type
 jdupes -1 -L -r /usr/share/licenses
@@ -96,4 +101,10 @@ if [ "$arch" = "i586" ] || [ "$arch" = "i686" ]; then
 	grep -q '^arch =' /etc/zypp/zypp.conf
 fi
 """,
-)
+    )
+    for os_version in (
+        OsVersion.SLCC_FREE,
+        OsVersion.SLCC_PAID,
+        OsVersion.SLCC_SLES_16_CONTAINERS,
+    )
+]
