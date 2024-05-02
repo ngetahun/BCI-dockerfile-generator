@@ -97,7 +97,13 @@ def _get_base_image_prj_pkg(os_version: OsVersion) -> tuple[str, str]:
 
 
 def _get_bci_project_name(os_version: OsVersion) -> str:
-    prj_suffix = "SLE-15-SP" + str(os_version) if os_version.is_sle15 else os_version
+    if os_version.is_sle15:
+        prj_suffix = f"SLE-15-SP{os_version}"
+    elif os_version.is_slcc:
+        prj_suffix = str(os_version).replace("-", ":")
+    else:
+        prj_suffix = str(os_version)
+
     return f"devel:BCI:{prj_suffix}"
 
 
