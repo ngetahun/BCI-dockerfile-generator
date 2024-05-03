@@ -3,7 +3,6 @@
 from itertools import product
 from pathlib import Path
 
-from bci_build.package import ALL_BASE_OS_VERSIONS
 from bci_build.package import ALL_NONBASE_OS_VERSIONS
 from bci_build.package import CAN_BE_LATEST_OS_VERSION
 from bci_build.package import DOCKERFILE_RUN
@@ -138,7 +137,7 @@ HEALTHCHECK --start-period=5m --timeout=5s --interval=5s --retries=2 \
     CMD /usr/lib/dirsrv/dscontainer -H
 """,
     )
-    for os_version in ALL_BASE_OS_VERSIONS
+    for os_version in ALL_NONBASE_OS_VERSIONS
 ]
 
 
@@ -256,6 +255,7 @@ PROMETHEUS_CONTAINERS = [
         custom_end=_generate_prometheus_family_healthcheck(_PROMETHEUS_PORT),
     )
     for os_version in ALL_NONBASE_OS_VERSIONS
+    if not os_version.is_slcc
 ]
 
 _ALERTMANAGER_PACKAGE_NAME = "golang-github-prometheus-alertmanager"
@@ -285,6 +285,7 @@ ALERTMANAGER_CONTAINERS = [
         custom_end=_generate_prometheus_family_healthcheck(_ALERTMANAGER_PORT),
     )
     for os_version in ALL_NONBASE_OS_VERSIONS
+    if not os_version.is_slcc
 ]
 
 _BLACKBOX_EXPORTER_PACKAGE_NAME = "prometheus-blackbox_exporter"
@@ -360,6 +361,7 @@ GRAFANA_CONTAINERS = [
         """,
     )
     for os_version in ALL_NONBASE_OS_VERSIONS
+    if not os_version.is_slcc
 ]
 
 _NGINX_FILES = {}
@@ -632,5 +634,11 @@ WORKDIR $CATALINA_HOME
         entrypoint_user="tomcat",
         logo_url="https://tomcat.apache.org/res/images/tomcat.png",
     )
-    for tomcat_major, os_version in product(_TOMCAT_VERSIONS, ALL_BASE_OS_VERSIONS)
+    for tomcat_major, os_version in list(
+        product(
+            _TOMCAT_VERSIONS,
+            set(ALL_NONBASE_OS_VERSIONS).difference({OsVersion.SLCC_FREE}),
+        )
+    )
+    + [(_TOMCAT_VERSIONS[-1], OsVersion.SLCC_FREE)]
 ]

@@ -133,9 +133,9 @@ PYTHON_3_12_CONTAINERS = [
     PythonDevelopmentContainer(
         **_get_python_kwargs("3.12", OsVersion.SP6),
         package_name="python-3.12-image",
-        # Technically it is the latest but we want to prefer the long term Python
-        # 3.11 for SLE, SLCC Paid & TW
-        is_latest=os_version == OsVersion.SLCC_FREE,
+        # Technically it is the latest but we want to prefer the long term
+        # Python 3.11 for SLE 15 & TW
+        is_latest=os_version.is_slcc,
     )
     for os_version in (
         OsVersion.SP6,
