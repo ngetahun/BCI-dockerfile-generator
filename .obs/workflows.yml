@@ -1,67 +1,23 @@
 ---
 staging_build:
   steps:
-    - branch_package:
-        source_project: home:defolos:BCI:CR:SLE-15-SP4
-        source_package: python-3.10-image
-        target_project: home:defolos:BCI:CR:SLE-15-SP4:Staging
-    - branch_package:
-        source_project: home:defolos:BCI:CR:SLE-15-SP4
-        source_package: nodejs-16-image
-        target_project: home:defolos:BCI:CR:SLE-15-SP4:Staging
-    - branch_package:
-        source_project: home:defolos:BCI:CR:SLE-15-SP4
-        source_package: init-image
-        target_project: home:defolos:BCI:CR:SLE-15-SP4:Staging
-    - branch_package:
-        source_project: home:defolos:BCI:CR:SLE-15-SP4
-        source_package: postgres-14-image
-        target_project: home:defolos:BCI:CR:SLE-15-SP4:Staging
-    - branch_package:
-        source_project: home:defolos:BCI:CR:SLE-15-SP4
-        source_package: minimal-image
-        target_project: home:defolos:BCI:CR:SLE-15-SP4:Staging
-    - branch_package:
-        source_project: home:defolos:BCI:CR:SLE-15-SP4
-        source_package: micro-image
-        target_project: home:defolos:BCI:CR:SLE-15-SP4:Staging
-    - branch_package:
-        source_project: home:defolos:BCI:CR:SLE-15-SP4
-        source_package: busybox-image
-        target_project: home:defolos:BCI:CR:SLE-15-SP4:Staging
-    - branch_package:
-        source_project: home:defolos:BCI:CR:SLE-15-SP4
-        source_package: sle15-kernel-module-devel-image
-        target_project: home:defolos:BCI:CR:SLE-15-SP4:Staging
   filters:
     event: pull_request
 
-refresh_devel_BCI:
+refresh_staging_project:
   steps:
     - trigger_services:
-        project: devel:BCI:SLE-15-SP4
-        package: python-3.10-image
-    - trigger_services:
-        project: devel:BCI:SLE-15-SP4
-        package: nodejs-16-image
-    - trigger_services:
-        project: devel:BCI:SLE-15-SP4
-        package: init-image
-    - trigger_services:
-        project: devel:BCI:SLE-15-SP4
-        package: postgres-14-image
-    - trigger_services:
-        project: devel:BCI:SLE-15-SP4
-        package: minimal-image
-    - trigger_services:
-        project: devel:BCI:SLE-15-SP4
-        package: micro-image
-    - trigger_services:
-        project: devel:BCI:SLE-15-SP4
-        package: busybox-image
-    - trigger_services:
-        project: devel:BCI:SLE-15-SP4
-        package: sle15-kernel-module-devel-image
+        project: home:defolos:BCI:CR:SLE-15-SP4
+        package: _project
+  filters:
+    event: push
+    branches:
+      only:
+        - sle15-sp4
+
+
+refresh_devel_BCI:
+  steps:
   filters:
     event: push
     branches:
