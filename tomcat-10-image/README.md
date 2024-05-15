@@ -23,7 +23,7 @@ To deploy an application, copy the `.war` file file into
 `$CATALINA_BASE/webapps` (either during a container build or by bind-mounting
 the directory), and launch the container using the following command:
 ```ShellSession
-$ podman run -d --rm -p 8080:8080 registry.suse.com/suse/tomcat:10
+$ podman run -d --rm -p 8080:8080 registry.suse.com/suse/tomcat:latest
 ```
 
 The deployed webapp is then accessible via `http://localhost:8080/$webapp_name`.
@@ -40,7 +40,7 @@ follows:
 ```ShellSession
 $ chmod 0777 /path/to/my/app
 $ podman run --rm -d -v /path/to/my/app:/usr/share/tomcat/webapps:z \
-      -p 8080:8080 registry.suse.com/suse/tomcat:10
+      -p 8080:8080 registry.suse.com/suse/tomcat:latest
 ```
 
 
@@ -56,7 +56,7 @@ options to the container runtime using the `-e` flag:
 ```ShellSession
 $ podman run -it --rm \
       -e JAVA_OPTS="-Xmx1024m" -p 8080:8080 \
-      registry.suse.com/suse/tomcat:10
+      registry.suse.com/suse/tomcat:latest
 ```
 
 The image ships with `CATALINA_HOME` set to `/usr/share/tomcat`
