@@ -264,6 +264,16 @@ class OsVersion(enum.Enum):
             return (f"skelcd-EULA-{str(self.value).lower()}",)
         return ()
 
+    @property
+    def release_package_names(self) -> tuple[str, ...]:
+        if self.value == OsVersion.TUMBLEWEED.value:
+            return ("openSUSE-release", "openSUSE-release-appliance-docker")
+        if self.is_slcc:
+            return (f"{str(self.value).lower()}-release",)
+
+        assert self.is_sle15
+        return ("sles-release",)
+
 
 SLCC_OS_VERSIONS: list[OsVersion] = [
     OsVersion.SLCC_FREE,

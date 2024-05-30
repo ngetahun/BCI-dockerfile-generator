@@ -45,6 +45,7 @@ SLCC_BASE_CONTAINERS = [
                 if os_version.has_container_suseconnect
                 else ()
             )
+            + os_version.release_package_names
         ],
         config_sh_script=r"""echo "Configure image: [$kiwi_iname]..."
 
