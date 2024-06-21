@@ -16,20 +16,28 @@ if command -v rpm > /dev/null; then
     suseImportBuildKey
 fi
 
+
 echo "Configure image: [$kiwi_iname]..."
 
-# don't have multiple licenses of the same type
+#======================================
+# Setup baseproduct link
+#--------------------------------------
+suseSetupProduct
+
+#======================================
+# Import repositories' keys
+#--------------------------------------
+suseImportBuildKey
+
+
+# don't have duplicate licenses of the same type
 jdupes -1 -L -r /usr/share/licenses
 
-#
 zypper --non-interactive rm -u jdupes
 
 # Not needed, but neither rpm nor libzypp handle rpmlib(X-CheckUnifiedSystemdir) yet
 # which would avoid it being installed by filesystem package
 rpm -e compat-usrmerge-tools
-
-# FIXME: stop hardcoding the url, use some external mechanism once available
-zypper -n ar --gpgcheck --enable 'https://updates.suse.com/SUSE/Products/ALP-Dolomite/1.0/$basearch/product/' repo-basalt
 
 #======================================
 # Disable recommends
@@ -42,15 +50,24 @@ sed -i 's/.*solver.onlyRequires.*/solver.onlyRequires = true/g' /etc/zypp/zypp.c
 sed -i 's/.*rpm.install.excludedocs.*/rpm.install.excludedocs = yes/g' /etc/zypp/zypp.conf
 
 #======================================
+# Configure SLE BCI repositories
+#--------------------------------------
+zypper -n ar --refresh --gpgcheck --priority 100 --enable 'https://updates.suse.com/SUSE/Products/SLE-BCI/$releasever_major-SP$releasever_minor/$basearch/product/' SLE_BCI
+zypper -n ar --refresh --gpgcheck --priority 100 --disable 'https://updates.suse.com/SUSE/Products/SLE-BCI/$releasever_major-SP$releasever_minor/$basearch/product_debug/' SLE_BCI_debug
+zypper -n ar --refresh --gpgcheck --priority 100 --disable 'https://updates.suse.com/SUSE/Products/SLE-BCI/$releasever_major-SP$releasever_minor/$basearch/product_source/' SLE_BCI_source
+
+#======================================
 # Remove locale files
 #--------------------------------------
 shopt -s globstar
 rm -f /usr/share/locale/**/*.mo
 
+#======================================
 # Remove zypp uuid (bsc#1098535)
+#--------------------------------------
 rm -f /var/lib/zypp/AnonymousUniqueId
 
-# Remove various log files. While it's possible to just rm -rf /var/log/*, that
+# Remove various log files. Although possible to just rm -rf /var/log/*, that
 # would also remove some package owned directories (not %ghost) and some files
 # are actually wanted, like lastlog in the !docker case.
 # For those wondering about YaST2 here: Kiwi writes /etc/hosts, so the version
@@ -62,14 +79,20 @@ rm -rf /var/log/{zypper.log,zypp/history,YaST2}
 # Remove the entire zypper cache content (not the dir itself, owned by libzypp)
 rm -rf /var/cache/zypp/*
 
-# Assign a fixed architecture in zypp.conf, to use the container's arch even if
-# the host arch differs (e.g. docker with --platform doesn't affect uname)
-arch=$(rpm -q --qf %{arch} glibc)
-if [ "$arch" = "i586" ] || [ "$arch" = "i686" ]; then
-	sed -i "s/^# arch =.*\$/arch = i686/" /etc/zypp/zypp.conf
-	# Verify that it's applied
-	grep -q '^arch =' /etc/zypp/zypp.conf
-fi
+#==========================================
+# Hack! The go container management tools can't handle sparse files:
+# https://github.com/golang/go/issues/13548
+# If lastlog doesn't exist, useradd doesn't attempt to reserve space,
+# also in derived containers.
+#------------------------------------------
+rm -f /var/log/lastlog
+
+#======================================
+# Remove locale files
+#--------------------------------------
+find /usr/share/locale -name '*.mo' -delete
+
+exit 0
 
 
 #=======================================
