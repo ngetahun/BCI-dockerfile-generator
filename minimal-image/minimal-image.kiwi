@@ -29,7 +29,7 @@ You can contact the BCI team via https://github.com/SUSE/bci/discussions
           name="opensuse/bci/bci-minimal"
           tag="%OS_VERSION_ID_SP%"
           maintainer="openSUSE (https://www.opensuse.org/)"
-          additionaltags="%OS_VERSION_ID_SP%.%RELEASE%,latest">
+          additionaltags="latest,%OS_VERSION_ID_SP%.%RELEASE%">
         <labels>
           <suse_label_helper:add_prefix prefix="org.opensuse.bci.minimal">
             <label name="org.opencontainers.image.title" value="openSUSE Tumbleweed BCI Minimal"/>
