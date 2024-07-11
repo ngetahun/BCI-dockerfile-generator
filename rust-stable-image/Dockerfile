@@ -22,6 +22,8 @@
 
 FROM opensuse/tumbleweed:latest
 
+RUN set -euo pipefail; zypper -n in --no-recommends rust1.79 cargo1.79; zypper -n clean; rm -rf /var/log/{lastlog,tallylog,zypper.log,zypp/history,YaST2}
+
 MAINTAINER openSUSE (https://www.opensuse.org/)
 
 # Define labels according to https://en.opensuse.org/Building_derived_containers
@@ -39,8 +41,6 @@ LABEL org.opensuse.lifecycle-url="https://en.opensuse.org/Lifetime"
 LABEL org.opensuse.release-stage="released"
 # endlabelprefix
 LABEL io.artifacthub.package.readme-url="https://raw.githubusercontent.com/SUSE/BCI-dockerfile-generator/Tumbleweed/rust-stable-image/README.md"
-
-RUN set -euo pipefail; zypper -n in --no-recommends rust1.79 cargo1.79; zypper -n clean; rm -rf /var/log/{lastlog,tallylog,zypper.log,zypp/history,YaST2}
 ENV RUST_VERSION="%%RUST_VERSION%%"
 ENV CARGO_VERSION="%%CARGO_VERSION%%"
 ENV CC="/usr/local/bin/gcc"

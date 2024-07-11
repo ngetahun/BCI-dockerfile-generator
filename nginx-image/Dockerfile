@@ -20,6 +20,8 @@
 
 FROM opensuse/tumbleweed:latest
 
+RUN set -euo pipefail; zypper -n in --no-recommends gawk nginx findutils envsubst; zypper -n clean; rm -rf /var/log/{lastlog,tallylog,zypper.log,zypp/history,YaST2}
+
 MAINTAINER openSUSE (https://www.opensuse.org/)
 
 # Define labels according to https://en.opensuse.org/Building_derived_containers
@@ -37,8 +39,6 @@ LABEL org.opensuse.lifecycle-url="https://en.opensuse.org/Lifetime"
 LABEL org.opensuse.release-stage="released"
 # endlabelprefix
 LABEL io.artifacthub.package.readme-url="https://raw.githubusercontent.com/SUSE/BCI-dockerfile-generator/Tumbleweed/nginx-image/README.md"
-
-RUN set -euo pipefail; zypper -n in --no-recommends gawk nginx findutils envsubst; zypper -n clean; rm -rf /var/log/{lastlog,tallylog,zypper.log,zypp/history,YaST2}
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["nginx", "-g", "daemon off;"]
 EXPOSE 80
