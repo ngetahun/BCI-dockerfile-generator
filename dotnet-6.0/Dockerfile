@@ -23,6 +23,8 @@
 #!BuildRelease: 32
 FROM bci/bci-base:15.6
 
+
+
 MAINTAINER SUSE LLC (https://www.suse.com/)
 
 # Define labels according to https://en.opensuse.org/Building_derived_containers
@@ -43,8 +45,6 @@ LABEL com.suse.lifecycle-url="https://www.suse.com/lifecycle#suse-linux-enterpri
 LABEL com.suse.release-stage="released"
 # endlabelprefix
 LABEL io.artifacthub.package.readme-url="%SOURCEURL%/README.md"
-
-
 # telemetry opt out: https://docs.microsoft.com/en-us/dotnet/core/tools/telemetry#how-to-opt-out
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
 
